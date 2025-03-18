@@ -40,38 +40,50 @@ def download_repo(repo_url):
     return response.content, None
 
 def extract_files(zip_content, max_files=20):
-    """Extract files from the ZIP content"""
+    """Extract files from the ZIP content with intelligent directory prioritization"""
     temp_dir = tempfile.mkdtemp()
     file_contents = {}
     
     try:
         zip_file = zipfile.ZipFile(io.BytesIO(zip_content))
         
-        # Get list of all files, sorted by size
-        file_list = [(file_info.filename, file_info.file_size) 
-                      for file_info in zip_file.infolist() 
-                      if not file_info.is_dir() and not file_info.filename.startswith('__')]
+        all_files = [(file_info.filename, file_info.file_size) 
+                     for file_info in zip_file.infolist() 
+                     if not file_info.is_dir() and not file_info.filename.startswith('__')]
         
-        # Sort by size and filter out binary files and large files
-        file_list = [(name, size) for name, size in file_list 
-                     if size < 100000 and not name.endswith(('.jpg', '.png', '.gif', '.zip', '.exe'))]
+        filtered_files = [(name, size) for name, size in all_files 
+                         if size < 100000 and not name.endswith(('.jpg', '.png', '.gif', '.zip', '.exe'))]
         
-        # Extract the first max_files files
+        exclude_dirs = ['/.github/', '/.git/', '/.vscode/', '/.idea/', '/node_modules/', 
+                        '/venv/', '/__pycache__/', '/build/', '/dist/', '/.next/']
+        
+        code_files = [(name, size) for name, size in filtered_files 
+                     if not any(excl_dir in name for excl_dir in exclude_dirs)]
+        
+        code_extensions = ['.py', '.js', '.ts', '.jsx', '.tsx', '.java', '.go', '.rb', '.php', 
+                          '.html', '.css', '.scss', '.vue', '.rs', '.c', '.cpp', '.h', '.cs']
+        
+        main_code_files = [(name, size) for name, size in code_files 
+                          if any(name.endswith(ext) for ext in code_extensions)]
+        
+        # Then add remaining useful files
+        other_useful_files = [(name, size) for name, size in code_files 
+                             if name.endswith(('.md', '.txt', '.json', '.yml', '.yaml', '.xml')) 
+                             and not any(name.endswith(ext) for ext in code_extensions)]
+        
+        sorted_files = main_code_files + other_useful_files
+        
         count = 0
-        for filename, _ in file_list:
+        for filename, _ in sorted_files:
             if count >= max_files:
                 break
                 
-            # Check file extension
-            _, ext = os.path.splitext(filename)
-            if ext.lower() in ['.py', '.js', '.html', '.css', '.md', '.txt', '.json', '.yml', '.yaml', '.xml', '.java', '.rb', '.go', '.rs', '.ts', '.jsx', '.tsx']:
-                try:
-                    content = zip_file.read(filename).decode('utf-8')
-                    file_contents[filename] = content
-                    count += 1
-                except UnicodeDecodeError:
-                    # Skip binary files
-                    pass
+            try:
+                content = zip_file.read(filename).decode('utf-8')
+                file_contents[filename] = content
+                count += 1
+            except UnicodeDecodeError:
+                pass
     
     finally:
         shutil.rmtree(temp_dir)
@@ -80,24 +92,18 @@ def extract_files(zip_content, max_files=20):
 
 def analyze_repo_with_gemini(file_contents):
     """Use Gemini API to analyze repository files and generate questions"""
-    # Prepare the context
     context = "I have a GitHub repository with the following files:\n\n"
     
-    # Add file contents to context
     for filename, content in file_contents.items():
-        # Add filename
         context += f"File: {filename}\n"
         
-        # For very large files, truncate the content
         if len(content) > 2000:
             content = content[:2000] + "\n... (content truncated)"
             
         context += f"Content:\n{content}\n\n"
     
-    # Generate the prompt
-    prompt = f"{context}\n\nBased on this repository, generate 5-10 questions that would help someone understand this codebase better. Focus on architecture, key features, and potential areas for improvement."
+    prompt = f"{context}\n\nBased on this repository, generate 5-10 questions that would help someone understand this codebase better. Focus specifically on the main application code, architecture, key features, and potential areas for improvement. Ignore any configuration files, CI/CD workflows, or build metadata. Prioritize questions about the core functionality and structure of the application."
     
-    # Call Gemini API
     model = genai.GenerativeModel('gemini-1.5-pro')
     response = model.generate_content(prompt)
     
