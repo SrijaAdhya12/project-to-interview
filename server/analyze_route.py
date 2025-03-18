@@ -26,18 +26,30 @@ def download_repo(repo_url):
     owner = parts[3]
     repo = parts[4]
     
-    # GitHub API URL for downloading the repo as ZIP
     api_url = f"https://api.github.com/repos/{owner}/{repo}/zipball/main"
     
     response = requests.get(api_url)
     if response.status_code != 200:
-        # Try with 'master' branch if 'main' fails
         api_url = f"https://api.github.com/repos/{owner}/{repo}/zipball/master"
         response = requests.get(api_url)
         if response.status_code != 200:
             return None, f"Failed to download repository: {response.status_code}"
     
     return response.content, None
+
+def read_gitignore(zip_content):
+    gitignore_patterns = []
+    try:
+        zip_file = zipfile.ZipFile(io.BytesIO(zip_content))
+        
+        if '.gitignore' in zip_file.namelist():
+            with zip_file.open('.gitignore') as gitignore_file:
+                gitignore_patterns = [line.strip() for line in gitignore_file.readlines() if line.strip()]
+
+    except Exception as e:
+        print(f"Error reading .gitignore: {str(e)}")
+    
+    return gitignore_patterns
 
 def extract_files(zip_content, max_files=20):
     """Extract files from the ZIP content with intelligent directory prioritization"""
@@ -51,23 +63,21 @@ def extract_files(zip_content, max_files=20):
                      for file_info in zip_file.infolist() 
                      if not file_info.is_dir() and not file_info.filename.startswith('__')]
         
-        filtered_files = [(name, size) for name, size in all_files 
-                         if size < 100000 and not name.endswith(('.jpg', '.png', '.gif', '.zip', '.exe'))]
+        gitignore_patterns = read_gitignore(zip_content)
+        exclude_dirs = gitignore_patterns + [
+            '/node_modules/', '/venv/', '/__pycache__/', '/.vscode/', '/.idea/', '/build/', '/dist/', '/.next/'
+        ]
         
-        exclude_dirs = ['/.github/', '/.git/', '/.vscode/', '/.idea/', '/node_modules/', 
-                        '/venv/', '/__pycache__/', '/build/', '/dist/', '/.next/']
-        
-        code_files = [(name, size) for name, size in filtered_files 
-                     if not any(excl_dir in name for excl_dir in exclude_dirs)]
-        
+        filtered_files = [(name, size) for name, size in all_files
+                         if not any(excl_dir in name for excl_dir in exclude_dirs)]
+
         code_extensions = ['.py', '.js', '.ts', '.jsx', '.tsx', '.java', '.go', '.rb', '.php', 
                           '.html', '.css', '.scss', '.vue', '.rs', '.c', '.cpp', '.h', '.cs']
         
-        main_code_files = [(name, size) for name, size in code_files 
+        main_code_files = [(name, size) for name, size in filtered_files 
                           if any(name.endswith(ext) for ext in code_extensions)]
         
-        # Then add remaining useful files
-        other_useful_files = [(name, size) for name, size in code_files 
+        other_useful_files = [(name, size) for name, size in filtered_files 
                              if name.endswith(('.md', '.txt', '.json', '.yml', '.yaml', '.xml')) 
                              and not any(name.endswith(ext) for ext in code_extensions)]
         
@@ -117,17 +127,14 @@ def analyze():
     if not repo_url:
         return jsonify({'error': 'No repository URL provided'}), 400
     
-    # Download repo
     zip_content, error = download_repo(repo_url)
     if error:
         return jsonify({'error': error}), 400
     
-    # Extract files
     file_contents = extract_files(zip_content)
     if not file_contents:
         return jsonify({'error': 'No suitable files found in the repository'}), 400
     
-    # Analyze with Gemini
     try:
         questions = analyze_repo_with_gemini(file_contents)
         return jsonify({'questions': questions})
