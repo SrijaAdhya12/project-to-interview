@@ -16,7 +16,7 @@ const RepositoryForm = ({ repoUrl, setRepoUrl, loading, handleSubmit, error }) =
 						<input
 							type="text"
 							id="repo-url"
-							className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-12 sm:text-sm border-gray-300 rounded-md"
+							className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-3 pr-12 sm:text-sm border-gray-300 rounded-md"
 							placeholder="Enter GitHub repository URL"
 							value={repoUrl}
 							onChange={(e) => setRepoUrl(e.target.value)}
@@ -27,7 +27,7 @@ const RepositoryForm = ({ repoUrl, setRepoUrl, loading, handleSubmit, error }) =
 				<button
 					type="submit"
 					disabled={loading}
-					className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+					className="inline-flex cursor-pointer items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
 				>
 					{loading ? (
 						<>
