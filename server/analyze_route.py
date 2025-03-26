@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 import os
 import json
+import re 
 import numpy as np
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -87,6 +88,133 @@ def analyze():
         return jsonify(result)
     except Exception as e:
         return jsonify({'error': f'Error analyzing repository: {str(e)}'}), 500
+
+@analyze_bp.route('/review', methods=['POST'])
+def review_code():
+    """Analyze the repository code for potential improvements and code smells"""
+    data = request.json
+    repo_url = data.get('repo_url')
+    
+    if not repo_url:
+        return jsonify({'error': 'No repository URL provided'}), 400
+    
+    zip_content, error = download_repo(repo_url)
+    if error:
+        return jsonify({'error': error}), 400
+    
+    file_contents = extract_files(zip_content)
+    if not file_contents:
+        return jsonify({'error': 'No suitable files found in the repository'}), 400
+    
+    try:
+        # Prepare context for Gemini
+        context = "Repository Code Review Analysis:\n\n"
+        for filename, content in file_contents.items():
+            context += f"File: {filename}\n"
+            
+            # Limit content length to prevent excessive token usage
+            if len(content) > 3000:
+                content = content[:3000] + "\n... (content truncated)"
+            
+            context += f"Content:\n{content}\n\n"
+        
+        # Detailed prompt for comprehensive code review
+        prompt = f"""{context}
+
+Perform a comprehensive code review focusing on:
+
+1. Code Smells and Anti-Patterns:
+   - Identify code duplication
+   - Detect overly complex methods/functions
+   - Look for long methods that violate Single Responsibility Principle
+   - Find potential performance bottlenecks
+   - Identify unnecessary code or dead code
+
+2. Architectural Improvements:
+   - Suggest better design patterns
+   - Identify potential refactoring opportunities
+   - Recommend modularization strategies
+   - Suggest ways to improve code organization
+
+3. Best Practices and Standards:
+   - Check adherence to language-specific coding standards
+   - Look for potential security vulnerabilities
+   - Identify areas for improved error handling
+   - Recommend more efficient algorithms or data structures
+
+4. Potential Optimizations:
+   - Suggest performance improvements
+   - Identify memory-inefficient code
+   - Recommend more pythonic or idiomatic solutions
+
+Provide a structured JSON response with the following format:
+```json
+{{
+    "overall_code_quality": "Good/Average/Needs Improvement",
+    "code_smells": [
+        {{
+            "file": "filename.py",
+            "line_start": 10,
+            "line_end": 25,
+            "description": "Detailed explanation of the code smell",
+            "severity": "Low/Medium/High",
+            "suggestion": "Specific recommendation for improvement"
+        }}
+    ],
+    "architectural_suggestions": [
+        {{
+            "type": "Refactoring/Design Pattern/Modularization",
+            "description": "Detailed suggestion for improvement",
+            "potential_impact": "Brief explanation of expected benefits"
+        }}
+    ],
+    "performance_recommendations": [
+        {{
+            "file": "filename.py",
+            "description": "Performance improvement opportunity",
+            "suggested_optimization": "Specific code or approach to optimize"
+        }}
+    ],
+    "best_practices_feedback": [
+        {{
+            "category": "Error Handling/Security/Coding Standards",
+            "description": "Specific feedback and recommendations"
+        }}
+    ]
+}}
+```
+
+Ensure the response is comprehensive yet concise, focusing on actionable insights.
+Prioritize suggestions that can significantly improve code quality, maintainability, and performance.
+"""
+        
+        model = genai.GenerativeModel('gemini-1.5-pro')
+        response = model.generate_content(prompt)
+        
+        try:
+            # Try to parse the JSON directly
+            review_data = json.loads(response.text)
+        except json.JSONDecodeError:
+            # Fallback: Extract JSON from code block
+            try:
+                json_match = re.search(r'```json\s*([\s\S]*?)\s*```', response.text)
+                if json_match:
+                    review_data = json.loads(json_match.group(1))
+                else:
+                    return jsonify({
+                        'raw_response': response.text,
+                        'error': 'Could not parse JSON from Gemini response'
+                    }), 200
+            except Exception as e:
+                return jsonify({
+                    'raw_response': response.text,
+                    'error': f'Error parsing response: {str(e)}'
+                }), 200
+        
+        return jsonify(review_data)
+    
+    except Exception as e:
+        return jsonify({'error': f'Error reviewing repository: {str(e)}'}), 500
 
 @analyze_bp.route('/filter', methods=['POST'])
 def filter_questions():

@@ -1,11 +1,10 @@
-import React from 'react'
-import { RepoAnalyzer } from './components'
-
+import { AppRouter } from './components'
+import { BrowserRouter } from 'react-router'
 const App = () => {
   return (
-    <div>
-      <RepoAnalyzer/>
-    </div>
+		<BrowserRouter>
+			<AppRouter />
+		</BrowserRouter>
   )
 }
 
