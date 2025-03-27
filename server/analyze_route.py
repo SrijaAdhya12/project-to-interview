@@ -493,6 +493,7 @@ def _rule_based_company_classification(question_text, repo_features, question_co
     return companies
 
 def train_models(training_data, model_dir, difficulty_levels, company_types):
+
     """Train and save classification models using collected training data"""
     X_texts = [item['question'] + ' ' + item.get('context', '') for item in training_data]
     y_difficulty = [difficulty_levels.index(item['difficulty']) for item in training_data]
@@ -521,3 +522,125 @@ def train_models(training_data, model_dir, difficulty_levels, company_types):
     joblib.dump(company_model, company_model_path)
     
     return True
+
+
+
+
+chatbot_bp = Blueprint('chatbot', __name__)
+
+REPO_CONTEXTS = {}
+
+def extract_repo_context(repo_url):
+    """
+    Download and extract repository context for conversational understanding
+    
+    Args:
+        repo_url (str): GitHub repository URL
+    
+    Returns:
+        str: Extracted repository context
+    """
+    if repo_url in REPO_CONTEXTS:
+        return REPO_CONTEXTS[repo_url]
+    
+    zip_content, error = download_repo(repo_url)
+    if error:
+        return f"Error downloading repository: {error}"
+    
+    file_contents = extract_files(zip_content, max_files=20)
+    
+    context = "Repository Context:\n\n"
+    for filename, content in file_contents.items():
+        context += f"File: {filename}\n"
+        
+        if len(content) > 2000:
+            content = content[:2000] + "\n... (content truncated)"
+        
+        context += f"Content:\n{content}\n\n"
+    
+    REPO_CONTEXTS[repo_url] = context
+    
+    return context
+
+@chatbot_bp.route('/chatbot', methods=['POST'])
+def chatbot():
+    """
+    Chatbot route for repository-aware conversations and coding assistance
+    
+    Supports:
+    1. Questions about a specific repository
+    2. Code improvement suggestions
+    3. General coding questions
+    4. Feature enhancement recommendations
+    """
+    data = request.json
+    
+    # Required parameters
+    question = data.get('question')
+    repo_url = data.get('repo_url', None)
+    
+    if not question:
+        return jsonify({'error': 'No question provided'}), 400
+    
+    try:
+        repo_context = ""
+        if repo_url:
+            repo_context = extract_repo_context(repo_url)
+        
+        if repo_url:
+            prompt = f"""{repo_context}
+
+Given the repository context above, please help me with the following:
+
+{question}
+
+Provide a detailed, actionable response that is:
+- Directly relevant to the repository's context
+- Technically precise
+- Offering practical insights or solutions
+- Written in a clear, professional manner
+"""
+        else:
+            prompt = f"""General Coding Assistance:
+
+{question}
+
+Please provide a comprehensive, technically accurate answer that includes:
+- Clear explanation
+- Practical code examples if relevant
+- Best practices and considerations
+"""
+        
+        model = genai.GenerativeModel('gemini-1.5-pro')
+        response = model.generate_content(prompt)
+        
+        return jsonify({
+            'response': response.text,
+            'has_repo_context': bool(repo_url)
+        })
+    
+    except Exception as e:
+        return jsonify({
+            'error': f'Error processing chatbot request: {str(e)}',
+            'details': str(e)
+        }), 500
+
+@chatbot_bp.route('/clear_repo_context', methods=['POST'])
+def clear_repo_context():
+    """
+    Clear stored repository context
+    
+    Useful for managing memory and starting fresh conversations
+    """
+    data = request.json
+    repo_url = data.get('repo_url')
+    
+    if not repo_url:
+        REPO_CONTEXTS.clear()
+        return jsonify({'message': 'All repository contexts cleared'})
+    
+    if repo_url in REPO_CONTEXTS:
+        del REPO_CONTEXTS[repo_url]
+        return jsonify({'message': f'Context for {repo_url} cleared'})
+    
+    return jsonify({'message': 'No context found for the given repository'}), 404
