@@ -1,8 +1,9 @@
-import { AppRouter } from './components'
+import { AppRouter, Header } from './components'
 import { BrowserRouter } from 'react-router'
 const App = () => {
   return (
-		<BrowserRouter>
+	  <BrowserRouter>
+		  <Header/>
 			<AppRouter />
 		</BrowserRouter>
   )

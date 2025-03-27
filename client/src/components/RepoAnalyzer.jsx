@@ -1,8 +1,8 @@
-import  { useState } from 'react'
+import { useState } from 'react'
 import { Header, RepositoryForm, FilterControls, QuestionsList, LoadingState } from './index'
 import { getDifficultyColor, getCompanyBadgeColor } from '../utils/ColorUtils'
 
-const RepoAnalyzer = () =>{
+const RepoAnalyzer = () => {
 	const [repoUrl, setRepoUrl] = useState('')
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState('')
@@ -49,7 +49,6 @@ const RepoAnalyzer = () =>{
 				setFilteredQuestions(data.questions)
 				setMetadata(data.metadata)
 			} else {
-				// Handle unstructured response
 				setError('Received unstructured response from the server')
 			}
 		} catch (err) {
@@ -144,7 +143,6 @@ const RepoAnalyzer = () =>{
 
 	return (
 		<div className="min-h-screen bg-gray-50">
-			<Header />
 
 			<main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
 				<RepositoryForm

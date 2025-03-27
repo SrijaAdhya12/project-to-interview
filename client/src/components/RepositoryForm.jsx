@@ -1,6 +1,6 @@
 import { FaGithub, FaSearch, FaSpinner } from 'react-icons/fa'
 
-const RepositoryForm = ({ repoUrl, setRepoUrl, loading, handleSubmit, error }) =>{
+const RepositoryForm = ({ repoUrl, setRepoUrl, loading, handleSubmit, error }) => {
 	return (
 		<div className="bg-white shadow rounded-lg p-6 mb-6">
 			<h2 className="text-lg font-medium text-gray-900 mb-4">Analyze GitHub Repository</h2>
