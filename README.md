@@ -108,7 +108,7 @@ $> flask run                             # starts the Flask server
 
 - See [LICENSE]
 
-**Pritam Kundu, 2024**
+**Srija Adhya, 2025**
 
 ![line]
 
