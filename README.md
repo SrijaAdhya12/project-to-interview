@@ -51,7 +51,7 @@
 
 ## Developement
 
-1. Setup .env file in both client and server with the help pf .env.example
+1. Setup .env file in both client and server with the help of .env.example
 2. Run the following commands for running client (frontEnd)
 ```sh
 $> cd client
