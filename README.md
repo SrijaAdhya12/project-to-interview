@@ -35,7 +35,7 @@
 
 🧠 **Code Quality Analyzer**
 
-- Detects spelling mistakes in code and comments.
+- Detects code smells.
 - Provides architectural suggestions to improve code structure and modularity.
 - Offers performance optimization tips for faster and more efficient execution.
 - Gives best practices feedback based on industry standards (naming conventions, code readability, etc).
