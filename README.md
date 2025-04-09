@@ -4,7 +4,7 @@
     <a href="https://github.com/warmachine028/project-to-interview">
         <img width="200" src="https://cdn-icons-png.flaticon.com/512/3135/3135682.png" alt="project-to-interview">
     </a>
-    <p style="font-family: roboto, calibri; font-size:12pt; font-style:italic"> A good one liner description here </p>
+    <p style="font-family: roboto, calibri; font-size:12pt; font-style:italic"> Your ultimate interview preperation Kit </p>
     <a src="https://github.com/warmachine028/project-to-interview/forks">
         <img alt="GitHub forks" src="https://img.shields.io/github/forks/warmachine028/project-to-interview">
     </a>
