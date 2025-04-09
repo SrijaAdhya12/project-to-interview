@@ -51,10 +51,21 @@
 
 ## Developement
 
-- Steps used for development of this project
-- Build processes
-- CI/CD commands
-- Docker commands
+1. Setup .env file in both client and server with the help pf .env.example
+2. Run the following commands for running client (frontEnd)
+```sh
+$> cd client
+$> npm i       # install all packages
+$> npm run dev # run the frontend
+```
+3. Run the following commands for running server (backEnd)
+```sh
+$> cd server
+$> python -m venv venv                   # create a virtual enviroment (optional)
+$> pip install -r requirements.txt       # install all packages
+$> flask run                             # starts the Flask server
+```
+
 
 ![line]
 
