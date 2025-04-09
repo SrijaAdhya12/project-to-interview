@@ -97,8 +97,8 @@ $> flask run                             # starts the Flask server
 ## Best Contributors
 
 <div align="center">
-    <a href="https://github.com/warmachine028/project-to-interview/graphs/contributors">
-        <img src="https://contrib.rocks/image?repo=warmachine028/project-to-interview" alt="contributors"/>
+    <a href="https://github.com/srijaadhya12/project-to-interview/graphs/contributors">
+        <img src="https://contrib.rocks/image?repo=srijaadhya12/project-to-interview" alt="contributors"/>
     </a>
 </div>
 
