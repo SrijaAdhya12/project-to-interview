@@ -63,10 +63,13 @@
 - Flask
 - SkLearn
 - Random Forest Classifier
+- MultiOutput Classifier
+- TFIDF
+- Gemini API 
 - React
 - Tailwind
 
-![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white) ![Markdown](https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor=white) ![Prettier](https://img.shields.io/badge/prettier-1A2B34?style=for-the-badge&logo=prettier&logoColor=pink) ![Dependabot](https://img.shields.io/badge/dependabot-025E8C?style=for-the-badge&logo=dependabot&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white) ![YAML](https://img.shields.io/badge/yaml-%23ffffff.svg?style=for-the-badge&logo=yaml&logoColor=151515) ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![Flask](https://img.shields.io/badge/flask-%23121011.svg?style=for-the-badge&logo=flask&logoColor=white) ![Sklearn](https://img.shields.io/badge/sklearn-%23000000.svg?style=for-the-badge&logo=sklearn&logoColor=white) ![Random Forest Classifier](https://img.shields.io/badge/randomforestclassifier-1A2B34?style=for-the-badge&logo=randomforestclassifier&logoColor=pink)  ![MultiOutput Classifier](https://img.shields.io/badge/MultiOutputClassifier-CA4245?style=for-the-badge&logo=randomforestclassifier&logoColor=white) ![TFIDF](https://img.shields.io/badge/tfidf-%23323330.svg?style=for-the-badge&logo=tfidf&logoColor=%23F7DF1E) ![Gemini](https://img.shields.io/badge/gemini%20-ffffff.svg?style=for-the-badge&logo=googlegemini&logoColor=blue) ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white) 
 
 ![line]
 
