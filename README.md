@@ -2,7 +2,7 @@
 
 <div align=center>
     <a href="https://github.com/warmachine028/project-to-interview">
-        <img width="200" src="https://img.icons8.com/?size=1000&id=46874" alt="project-to-interview">
+        <img width="200" src="https://cdn-icons-png.flaticon.com/512/3135/3135682.png" alt="project-to-interview">
     </a>
     <p style="font-family: roboto, calibri; font-size:12pt; font-style:italic"> A good one liner description here </p>
     <a src="https://github.com/warmachine028/project-to-interview/forks">
