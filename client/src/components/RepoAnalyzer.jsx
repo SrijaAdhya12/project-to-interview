@@ -30,7 +30,7 @@ const RepoAnalyzer = () => {
 		setMetadata(null)
 
 		try {
-			const response = await fetch('http://127.0.0.1:5000/analyze', {
+			const response = await fetch('https://project-to-interview.onrender.com/analyze', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -65,7 +65,7 @@ const RepoAnalyzer = () => {
 		}
 
 		try {
-			const response = await fetch('http://127.0.0.1:5000/filter', {
+			const response = await fetch('https://project-to-interview.onrender.com/filter', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -101,7 +101,7 @@ const RepoAnalyzer = () => {
 		const question = filteredQuestions[questionIndex]
 
 		try {
-			const response = await fetch('http://127.0.0.1:5000/feedback', {
+			const response = await fetch('https://project-to-interview.onrender.com/feedback', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -143,7 +143,6 @@ const RepoAnalyzer = () => {
 
 	return (
 		<div className="min-h-screen bg-gray-50">
-
 			<main className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
 				<RepositoryForm
 					repoUrl={repoUrl}

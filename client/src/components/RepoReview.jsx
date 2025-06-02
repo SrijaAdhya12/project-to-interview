@@ -21,7 +21,7 @@ const RepoReview = () => {
 			setLoading(true)
 			setError(null)
 
-			const response = await fetch('http://127.0.0.1:5000/review', {
+			const response = await fetch('https://project-to-interview.onrender.com/review', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

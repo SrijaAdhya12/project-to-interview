@@ -145,7 +145,7 @@ Format your response as a JSON array of objects with the following structure:
 Ensure the JSON is properly formatted and can be parsed by a JSON parser.
 """
     
-    model = genai.GenerativeModel('gemini-1.5-pro')
+    model = genai.GenerativeModel('gemini-2.0-flash')
     response = model.generate_content(prompt)
     
     try:

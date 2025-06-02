@@ -188,7 +188,7 @@ Ensure the response is comprehensive yet concise, focusing on actionable insight
 Prioritize suggestions that can significantly improve code quality, maintainability, and performance.
 """
         
-        model = genai.GenerativeModel('gemini-1.5-pro')
+        model = genai.GenerativeModel('gemini-2.0-flash')
         response = model.generate_content(prompt)
         
         try:
@@ -611,7 +611,7 @@ Please provide a comprehensive, technically accurate answer that includes:
 - Best practices and considerations
 """
         
-        model = genai.GenerativeModel('gemini-1.5-pro')
+        model = genai.GenerativeModel('gemini-2.0-flash')
         response = model.generate_content(prompt)
         
         return jsonify({
