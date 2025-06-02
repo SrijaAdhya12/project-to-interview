@@ -30,7 +30,7 @@ const RepoAnalyzer = () => {
 		setMetadata(null)
 
 		try {
-			const response = await fetch('https://project-to-interview.onrender.com/analyze', {
+			const response = await fetch('http://127.0.0.1:5000/analyze', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -65,7 +65,7 @@ const RepoAnalyzer = () => {
 		}
 
 		try {
-			const response = await fetch('https://project-to-interview.onrender.com/filter', {
+			const response = await fetch('http://127.0.0.1:5000/filter', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -101,7 +101,7 @@ const RepoAnalyzer = () => {
 		const question = filteredQuestions[questionIndex]
 
 		try {
-			const response = await fetch('https://project-to-interview.onrender.com/feedback', {
+			const response = await fetch('http://127.0.0.1:5000/feedback', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

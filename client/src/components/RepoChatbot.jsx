@@ -61,7 +61,7 @@ const RepoChatbot = () => {
 				repo_url: isRepoQuestion ? repoUrl : null
 			}
 
-			const response = await fetch('https://project-to-interview.onrender.com/chatbot', {
+			const response = await fetch('http://127.0.0.1:5000/chatbot', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
