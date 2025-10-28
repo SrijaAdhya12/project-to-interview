@@ -1,4 +1,4 @@
-    updated on: 15th September 2025, Monday
+    updated on: 28th October 2025, Tuesday
 
 <div align=center>
     <a href="https://github.com/warmachine028/project-to-interview">
@@ -120,4 +120,4 @@ $> flask run                             # starts the Flask server
 [line]: https://user-images.githubusercontent.com/75939390/137615281-3a875960-92cc-407f-97fe-fd2319bdb252.png
 [License]: https://github.com/warmachine028/project-to-interview/blob/main/LICENSE
 
-<!-- 15/09/25 -->
+<!-- 28/10/25 -->
